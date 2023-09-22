@@ -1,0 +1,6 @@
+services:
+  flex_sign:
+    build: .
+    container_name: flex_sign
+    ports:
+      - "8080:8080"
