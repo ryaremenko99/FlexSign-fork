@@ -36,14 +36,14 @@ public class SignController {
      * @return stream of signed file or JSON with details of exception if something goes wrong
      */
     @PostMapping(path = "/sign")
-    public ResponseEntity<String> signDocument(
-            @RequestPart MultipartFile fileToBeSigned,
-            @RequestPart MultipartFile signatureFile,
+    public ResponseEntity<InputStreamResource> signDocument(
+            @RequestPart @IsPresent MultipartFile fileToBeSigned,
+            @RequestPart @IsPresent MultipartFile signatureFile,
             @RequestPart String password) {
 
-        String signed = certificateFacade.sign(fileToBeSigned, signatureFile, password);
+        InputStream signedFileInputStream = certificateFacade.sign(fileToBeSigned, signatureFile, password);
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(Objects.requireNonNull(fileToBeSigned.getContentType())))
-                .body(signed);
+                .body(new InputStreamResource(signedFileInputStream));
     }
 }

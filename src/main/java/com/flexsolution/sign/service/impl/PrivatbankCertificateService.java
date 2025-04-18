@@ -49,7 +49,7 @@ public class PrivatbankCertificateService extends AbstractCertificateService {
      * @throws UapkiException if something goes wrong and uapki library can't process the signature file or sign the document
      */
     @Override
-    public String sign(File fileToBeSigned,
+    public InputStream sign(File fileToBeSigned,
                             File signatureFile,
                             String password) throws UapkiException {
 
@@ -67,7 +67,7 @@ public class PrivatbankCertificateService extends AbstractCertificateService {
             List<Document> signedDocsList = library.sign(getSignParams(), toBeSignedBase64ContentList);
             PkiData signedPkiData = signedDocsList.get(0).getBytes();
             library.closeStorage();
-            return signedPkiData.toString();
+            return new ByteArrayInputStream(Base64.getDecoder().decode(signedPkiData.toString()));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             throw new ObjectTransformationException("MultipartFile", "byte[]", e);
