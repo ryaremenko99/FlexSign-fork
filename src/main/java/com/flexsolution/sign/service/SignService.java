@@ -53,8 +53,8 @@ public class SignService {
         return library.openStorage(SIGN_PROVIDER_PKCS_12, signatureFile.getAbsolutePath(), password, Open.Mode.RO);
     }
 
-    private Sign.SignParams getSignParams() {
-        Sign.SignParams signParameters = new Sign.SignParams(SignatureFormat.CADES_XL);
+    private Sign.SignParams getSignParams(SignatureFormat signatureFormat) {
+        Sign.SignParams signParameters = new Sign.SignParams(signatureFormat);
         signParameters.SetDetachedData(false);
         signParameters.SetIncludeCert(true);
         signParameters.SetIncludeTime(true);
