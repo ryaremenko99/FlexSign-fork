@@ -45,7 +45,7 @@ public class ControllerCertificateFacade {
      *
      * @return InputStream of signed document
      */
-    public InputStream sign(MultipartFile fileToBeSigned,
+    public String sign(MultipartFile fileToBeSigned,
                      MultipartFile signatureFile,
                      String password) {
 
@@ -63,7 +63,7 @@ public class ControllerCertificateFacade {
                             signatureFile.getOriginalFilename(),
                             certificateService.getClass().getName());
                 }
-                InputStream signedFile;
+                String signedFile;
                 // UAPKI бібліотека, яка лежить в основі цього застосунку, має фундаментальне обмеження -
                 // вона не вміє працювати з декількома ключами одночасно. Саме тому метод, який виконує підписання має
                 // виконуватись в 1 потоку.

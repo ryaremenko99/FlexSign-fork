@@ -10,5 +10,5 @@ import java.io.InputStream;
  */
 public interface CertificateService {
 
-    InputStream sign(File fileToBeSigned, File signatureFile, String password) throws UapkiException;
+    String sign(File fileToBeSigned, File signatureFile, String password) throws UapkiException;
 }

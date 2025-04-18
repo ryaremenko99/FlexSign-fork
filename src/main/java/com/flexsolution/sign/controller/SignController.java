@@ -1,7 +1,6 @@
 package com.flexsolution.sign.controller;
 
 import com.flexsolution.sign.facade.ControllerCertificateFacade;
-import com.flexsolution.sign.util.validation.IsPresent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -36,14 +35,14 @@ public class SignController {
      * @return stream of signed file or JSON with details of exception if something goes wrong
      */
     @PostMapping(path = "/sign")
-    public ResponseEntity<InputStreamResource> signDocument(
-            @RequestPart @IsPresent MultipartFile fileToBeSigned,
-            @RequestPart @IsPresent MultipartFile signatureFile,
+    public ResponseEntity<String> signDocument(
+            @RequestPart MultipartFile fileToBeSigned,
+            @RequestPart MultipartFile signatureFile,
             @RequestPart String password) {
 
-        InputStream signedFileInputStream = certificateFacade.sign(fileToBeSigned, signatureFile, password);
+        String signedFile = certificateFacade.sign(fileToBeSigned, signatureFile, password);
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(Objects.requireNonNull(fileToBeSigned.getContentType())))
-                .body(new InputStreamResource(signedFileInputStream));
+                .body(signedFile);
     }
 }
