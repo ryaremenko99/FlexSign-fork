@@ -80,7 +80,7 @@ public class PrivatbankCertificateService extends AbstractCertificateService {
      * @return Sign.SignParams
      */
     private Sign.SignParams getSignParams() {
-        Sign.SignParams signParameters = new Sign.SignParams(SignatureFormat.CADES_T);
+        Sign.SignParams signParameters = new Sign.SignParams(SignatureFormat.CADES_XL);
         signParameters.SetDetachedData(false);
         signParameters.SetIncludeCert(true);
         signParameters.SetIncludeTime(true);
