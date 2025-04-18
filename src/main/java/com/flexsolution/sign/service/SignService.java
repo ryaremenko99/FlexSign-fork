@@ -40,7 +40,7 @@ public class SignService {
         openStorage(signatureTempFile, signRequest.getPassword());
         selectKey(DEFAULT_KEY_INDEX);
         ArrayList<Sign.DataTbs> toBeSignedBase64ContentList = prepareFilesToSign(signRequest.getFilesToSign());
-        List<Document> signedDocsList = library.sign(getSignParams(), toBeSignedBase64ContentList);
+        List<Document> signedDocsList = library.sign(getSignParams(signRequest.getSignatureFormat()), toBeSignedBase64ContentList);
         library.closeStorage();
 
         return signedDocsList.stream()
