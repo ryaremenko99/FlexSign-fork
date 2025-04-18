@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.sit.uapki.common.Oids.CipherAlgo.Aes.AES192_CBC;
+import static com.sit.uapki.common.Oids.KeyAlgo.Dstu4145.DSTU4145_WITH_GOST3411;
 
 @Slf4j
 @Service
@@ -40,7 +41,7 @@ public class EncryptService {
 
         openStorage(signatureTempFile, signRequest.getPassword());
         selectKey(DEFAULT_KEY_INDEX);
-        Digest.Result digest = library.digest(AES192_CBC, new PkiData(signRequest.getFilesToSign().get(0)));
+        Digest.Result digest = library.digest(DSTU4145_WITH_GOST3411, new PkiData(signRequest.getFilesToSign().get(0)));
         library.closeStorage();
 
         return digest.getBytes().toString();
