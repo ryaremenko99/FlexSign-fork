@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.Set;
 
 /**
@@ -45,9 +47,10 @@ public class ControllerCertificateFacade {
      *
      * @return InputStream of signed document
      */
-    public InputStream sign(MultipartFile fileToBeSigned,
+    public String sign(MultipartFile fileToBeSigned,
                      MultipartFile signatureFile,
                      String password) {
+
 
         File signatureTempFile = FileHelper.multipartFile2File(signatureFile);
         File toBeSignedTempFile = FileHelper.multipartFile2File(fileToBeSigned);
@@ -63,7 +66,7 @@ public class ControllerCertificateFacade {
                             signatureFile.getOriginalFilename(),
                             certificateService.getClass().getName());
                 }
-                InputStream signedFile;
+                String signedFile;
                 // UAPKI бібліотека, яка лежить в основі цього застосунку, має фундаментальне обмеження -
                 // вона не вміє працювати з декількома ключами одночасно. Саме тому метод, який виконує підписання має
                 // виконуватись в 1 потоку.

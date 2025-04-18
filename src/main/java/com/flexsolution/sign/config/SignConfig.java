@@ -2,14 +2,11 @@ package com.flexsolution.sign.config;
 
 import com.flexsolution.sign.model.CMProviderModel;
 import com.flexsolution.sign.model.PfxModel;
-import com.flexsolution.sign.util.gson.PkiOidSerializer;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sit.uapki.Library;
 import com.sit.uapki.UapkiException;
 import com.sit.uapki.common.Oids;
 import com.sit.uapki.common.PkiData;
-import com.sit.uapki.common.PkiOid;
 import com.sit.uapki.method.Init;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -108,15 +105,5 @@ public class SignConfig {
         return CMProviderModel.builder()
                 .createPfx(pfxModel)
                 .build();
-    }
-
-    /**
-     * Configuration of Gson library
-     *
-     * @return Gson
-     */
-    @Bean
-    protected Gson gson() {
-        return new GsonBuilder().setPrettyPrinting().registerTypeAdapter(PkiOid.class, new PkiOidSerializer()).create();
     }
 }
