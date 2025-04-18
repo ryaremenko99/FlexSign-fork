@@ -1,62 +1,83 @@
 package com.flexsolution.sign.service;
 
-import com.flexsolution.sign.util.file.FileHelper;
+import com.flexsolution.sign.dto.SignRequest;
+import com.flexsolution.sign.util.file.FileUtils;
 import com.sit.uapki.Library;
 import com.sit.uapki.UapkiException;
+import com.sit.uapki.common.Document;
+import com.sit.uapki.common.Oids;
+import com.sit.uapki.common.PkiData;
+import com.sit.uapki.common.SignatureFormat;
+import com.sit.uapki.key.KeyInfo;
+import com.sit.uapki.key.StorageInfo;
+import com.sit.uapki.method.Open;
+import com.sit.uapki.method.Sign;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-/**
- * There are 2 reasons for why we added this level of abstraction:
- * <ul>
- *     <li>On the controller we receive MultipartFile objects, but it is a bad practice to use this object on the service layer,
- *     because in this case we won't be able to call the services from other part of the program.
- *     For example if we implement signing process from the CLI or if we decide to use a single signature file stored
- *     on the filesystem instead of reading it from the http request every time</li>
- *
- *     <li>Uapki library has a limitation, it can't sign documents with different signatures in parallel.
- *     That's why we added synchronized block here to sign the documents one by one in a single thread</li>
- * </ul>
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SignService {
 
-    private final CertificateService certificateService;
+    private static final String SIGN_PROVIDER_PKCS_12 = "PKCS12";
+    private static final int DEFAULT_KEY_INDEX = 0;
 
-    /**
-     * Sign document received though the controller
-     *
-     * @param fileToBeSigned MultipartFile the file that is required to be signed
-     * @param signatureFile  MultipartFile the file of signature
-     * @param password       String the password
-     * @return InputStream of signed document
-     */
-    public String sign(MultipartFile fileToBeSigned,
-                       MultipartFile signatureFile,
-                       String password) throws UapkiException, IOException {
+    private final Library library;
 
-        File signatureTempFile = FileHelper.multipartFile2File(signatureFile);
-        File toBeSignedTempFile = FileHelper.multipartFile2File(fileToBeSigned);
+    public List<String> sign(SignRequest signRequest) throws UapkiException, IOException {
+        File signatureTempFile = FileUtils.createTempFile(signRequest.getKey());
 
-        log.info("Спроба підписати документ {} ключем {}, за допомогою сервіса {}",
-                fileToBeSigned.getOriginalFilename(),
-                signatureFile.getOriginalFilename(),
-                certificateService.getClass().getName());
-        String signedFile;
-        // UAPKI бібліотека, яка лежить в основі цього застосунку, має фундаментальне обмеження -
-        // вона не вміє працювати з декількома ключами одночасно. Саме тому метод, який виконує підписання має
-        // виконуватись в 1 потоку.
-        synchronized (Library.class) {
-            signedFile = certificateService.sign(toBeSignedTempFile, signatureTempFile, password);
+        openStorage(signatureTempFile, signRequest.getPassword());
+        selectKey(DEFAULT_KEY_INDEX);
+        ArrayList<Sign.DataTbs> toBeSignedBase64ContentList = prepareFilesToSign(signRequest.getFilesToSign());
+        List<Document> signedDocsList = library.sign(getSignParams(), toBeSignedBase64ContentList);
+        library.closeStorage();
+
+        return signedDocsList.stream()
+                .map(Document::getBytes)
+                .map(PkiData::toString)
+                .collect(Collectors.toList());
+    }
+
+    protected StorageInfo openStorage(File signatureFile, String password) throws UapkiException {
+        return library.openStorage(SIGN_PROVIDER_PKCS_12, signatureFile.getAbsolutePath(), password, Open.Mode.RO);
+    }
+
+    private Sign.SignParams getSignParams() {
+        Sign.SignParams signParameters = new Sign.SignParams(SignatureFormat.CADES_XL);
+        signParameters.SetDetachedData(false);
+        signParameters.SetIncludeCert(true);
+        signParameters.SetIncludeTime(true);
+        signParameters.SetIncludeContentTS(true);
+        signParameters.SetSignAlgo(Oids.SignAlgo.Dstu4145.DSTU4145_WITH_GOST3411);
+        return signParameters;
+    }
+
+    private ArrayList<Sign.DataTbs> prepareFilesToSign(List<String> filesToSign) {
+        ArrayList<Sign.DataTbs> toBeSignedBase64ContentList = new ArrayList<>();
+        for (String fileToSign : filesToSign) {
+            Sign.DataTbs signDataTbs = new Sign.DataTbs(UUID.randomUUID().toString(), new PkiData(fileToSign));
+            toBeSignedBase64ContentList.add(signDataTbs);
         }
-        log.info("Файл {} успішно підписано", toBeSignedTempFile.getName());
-        return signedFile;
+
+        return toBeSignedBase64ContentList;
+    }
+
+    private KeyInfo selectKey(int index) throws UapkiException {
+        ArrayList<KeyInfo> keyInfoList = library.getKeys();
+        KeyInfo keyInfo = Optional.ofNullable(keyInfoList.get(index))
+                .orElseThrow(() -> new RuntimeException("No key found"));
+        library.selectKey(keyInfo.getId());
+        return keyInfo;
     }
 }

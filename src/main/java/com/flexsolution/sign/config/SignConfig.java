@@ -2,7 +2,7 @@ package com.flexsolution.sign.config;
 
 import com.flexsolution.sign.model.CMProviderModel;
 import com.flexsolution.sign.model.PfxModel;
-import com.flexsolution.sign.util.gson.PkiOidSerializer;
+import com.flexsolution.sign.serialize.PkiOidSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sit.uapki.Library;

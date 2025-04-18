@@ -1,4 +1,4 @@
-package com.flexsolution.sign.util.gson;
+package com.flexsolution.sign.serialize;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
