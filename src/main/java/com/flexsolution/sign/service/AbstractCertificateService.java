@@ -1,6 +1,5 @@
 package com.flexsolution.sign.service;
 
-import com.flexsolution.sign.exception.NoKeyException;
 import com.sit.uapki.Library;
 import com.sit.uapki.UapkiException;
 import com.sit.uapki.common.PkiData;
@@ -37,7 +36,7 @@ public abstract class AbstractCertificateService implements CertificateService {
     protected KeyInfo selectKey(int index) throws UapkiException {
         ArrayList<KeyInfo> keyInfoList = library.getKeys();
         KeyInfo keyInfo = Optional.ofNullable(keyInfoList.get(index))
-                .orElseThrow(() -> new NoKeyException(index));
+                .orElseThrow(() -> new RuntimeException("No key found"));
         library.selectKey(keyInfo.getId());
         return keyInfo;
     }

@@ -34,6 +34,7 @@ public enum SignatureFormat {
     UNDEFINED   ("UNDEFINED"),
     CADES_BES   ("CAdES-BES"),
     CADES_T     ("CAdES-T"),
+    CADES_XL     ("CAdES-XL"),
     CADES_C     ("CAdES-C"),
     CMS         ("CMS"),
     RAW         ("RAW");

@@ -1,6 +1,5 @@
 package com.flexsolution.sign.util.file;
 
-import com.flexsolution.sign.exception.ObjectTransformationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +23,7 @@ public class FileHelper {
         String prefix = FilenameUtils.getPrefix(filename);
         String extension = FilenameUtils.getExtension(filename);
         Path tempFilePath = Files.createTempFile(prefix, extension);
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("Тимчасовий файл для {} було створено за наступним шляхом: {}", filename, tempFilePath.toAbsolutePath());
         }
         return tempFilePath.toFile();
@@ -36,14 +35,10 @@ public class FileHelper {
      * @param multipartFile MultipartFile
      * @return File
      */
-    public static File multipartFile2File(MultipartFile multipartFile) {
-        try {
-            String originalFilename = multipartFile.getOriginalFilename();
-            File tempFile = FileHelper.createTempFile(originalFilename);
-            multipartFile.transferTo(tempFile);
-            return tempFile;
-        } catch (Exception e) {
-            throw new ObjectTransformationException("MultipartFile", "File", e);
-        }
+    public static File multipartFile2File(MultipartFile multipartFile) throws IOException {
+        String originalFilename = multipartFile.getOriginalFilename();
+        File tempFile = FileHelper.createTempFile(originalFilename);
+        multipartFile.transferTo(tempFile);
+        return tempFile;
     }
 }
