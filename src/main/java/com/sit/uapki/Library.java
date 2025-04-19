@@ -109,8 +109,9 @@ public final class Library {
             //  Warning: here need order
             loader.load("uapkic", "2.0.1");
             loader.load("uapkif", "2.0.1");
-            loader.load("uapki", "2.0.12");
-            
+            loader.load("uapki", null);
+//            loader.load("uapki", "2.0.12");
+
             //  Load cm-providers
             final String[] CM_LIBNAMES = new String[] {
                 "cm-pkcs12.1.0.13"
