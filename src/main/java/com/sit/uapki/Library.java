@@ -111,8 +111,9 @@ public final class Library {
             for (int i = 0; i < CM_LIBNAMES.length; i++) {
                 loader.load(CM_LIBNAMES[i], null);
             }
-            
-            this.uapki = (UapkiNativeInterface) Native.load("uapki", UapkiNativeInterface.class);
+
+            log.info("Loading native libraries...");
+            this.uapki = Native.load("uapki", UapkiNativeInterface.class);
         }
         catch (Exception e) {
             log.error("Can't load native library: ");
