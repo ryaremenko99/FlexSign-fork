@@ -107,8 +107,8 @@ public final class Library {
             LoaderLibFromResource loader = new LoaderLibFromResource();
 
             //  Warning: here need order
-            loader.load("uapkic", "2.0.0");
-            loader.load("uapkif", "2.0.0");
+            loader.load("uapkic", "2.0.12");
+            loader.load("uapkif", "2.0.12");
             loader.load("uapki", null);
             
             //  Load cm-providers
