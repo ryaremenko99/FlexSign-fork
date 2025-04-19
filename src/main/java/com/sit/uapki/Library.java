@@ -67,6 +67,7 @@ import com.sit.uapki.method.Version;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -77,6 +78,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 
+@Slf4j
 public final class Library {
 
     private interface UapkiNativeInterface extends com.sun.jna.Library {
@@ -123,7 +125,9 @@ public final class Library {
             this.uapki = (UapkiNativeInterface) Native.load("uapki", UapkiNativeInterface.class);
         }
         catch (Exception e) {
-            throw new UapkiException("Can't load native library: " + e.getMessage(), -1, "");
+            log.error("Can't load native library: ");
+            throw new RuntimeException(e);
+//            throw new UapkiException("Can't load native library: " + e.getMessage(), -1, "");
         }
 
         this.gson = new Gson();
