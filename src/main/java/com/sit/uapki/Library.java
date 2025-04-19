@@ -113,6 +113,7 @@ public final class Library {
             }
 
             log.info("Loading native libraries...");
+            System.setProperty("jna.library.path", "/tmp/uapki");
             this.uapki = Native.load("uapki", UapkiNativeInterface.class);
         }
         catch (Exception e) {
