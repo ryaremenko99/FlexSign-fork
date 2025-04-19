@@ -113,7 +113,7 @@ public final class Library {
             
             //  Load cm-providers
             final String[] CM_LIBNAMES = new String[] {
-                "cm-pkcs12"
+                "cm-pkcs12.1.0.13"
             };
             for (int i = 0; i < CM_LIBNAMES.length; i++) {
                 loader.load(CM_LIBNAMES[i], null);
