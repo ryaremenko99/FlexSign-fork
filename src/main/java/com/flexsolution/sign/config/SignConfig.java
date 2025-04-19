@@ -96,7 +96,7 @@ public class SignConfig {
      *
      * @return CMProviderModel
      */
-    @Bean(name = "cm-pkcs12")
+    @Bean(name = "cm-pkcs12.1.0.13")
     protected CMProviderModel cmPkcs12Provider() {
         PfxModel pfxModel = PfxModel.builder()
                 .bagCipher(Oids.CipherAlgo.Aes.AES192_CBC)
