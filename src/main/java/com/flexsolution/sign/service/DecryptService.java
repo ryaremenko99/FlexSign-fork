@@ -1,13 +1,13 @@
 package com.flexsolution.sign.service;
 
-import com.flexsolution.sign.dto.EncryptRequest;
+import com.flexsolution.sign.dto.DecryptRequest;
 import com.flexsolution.sign.util.file.FileUtils;
 import com.sit.uapki.Library;
 import com.sit.uapki.UapkiException;
 import com.sit.uapki.common.PkiData;
 import com.sit.uapki.key.KeyInfo;
 import com.sit.uapki.key.StorageInfo;
-import com.sit.uapki.method.Digest;
+import com.sit.uapki.method.Decrypt;
 import com.sit.uapki.method.Open;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,27 +18,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static com.sit.uapki.common.Oids.KeyAlgo.Dstu4145.DSTU4145_WITH_GOST3411;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EncryptService {
+public class DecryptService {
 
     private static final String SIGN_PROVIDER_PKCS_12 = "PKCS12";
     private static final int DEFAULT_KEY_INDEX = 0;
 
     private final Library library;
 
-    public String encrypt(EncryptRequest encryptRequest) throws UapkiException, IOException {
-        File signatureTempFile = FileUtils.createTempFile(encryptRequest.getKey());
+    public String decrypt(DecryptRequest decryptRequest) throws UapkiException, IOException {
+        File signatureTempFile = FileUtils.createTempFile(decryptRequest.getKey());
 
-        openStorage(signatureTempFile, encryptRequest.getPassword());
+        openStorage(signatureTempFile, decryptRequest.getPassword());
         selectKey(DEFAULT_KEY_INDEX);
-        Digest.Result digest = library.digest(DSTU4145_WITH_GOST3411, new PkiData(encryptRequest.getFileToEncrypt()));
+        Decrypt.Result decrypt = library.decrypt(new PkiData(decryptRequest.getFileToDecrypt()));
         library.closeStorage();
 
-        return digest.getBytes().toString();
+        return decrypt.getContent().getBytes().toString();
     }
 
     protected StorageInfo openStorage(File signatureFile, String password) throws UapkiException {

@@ -1,7 +1,7 @@
 package com.flexsolution.sign.controller;
 
-import com.flexsolution.sign.dto.EncryptRequest;
-import com.flexsolution.sign.service.EncryptService;
+import com.flexsolution.sign.dto.DecryptRequest;
+import com.flexsolution.sign.service.DecryptService;
 import com.sit.uapki.UapkiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +17,13 @@ import java.io.IOException;
 @Validated
 @RestController
 @RequiredArgsConstructor
-public class EncryptController {
+public class DecryptController {
 
-    private final EncryptService encryptService;
+    private final DecryptService decryptService;
 
-    @PostMapping(path = "/encrypt")
-    public ResponseEntity<String> encrypt(@RequestBody EncryptRequest encryptRequest) throws UapkiException, IOException {
-        String encrypt = encryptService.encrypt(encryptRequest);
+    @PostMapping(path = "/decrypt")
+    public ResponseEntity<String> decrypt(@RequestBody DecryptRequest decryptRequest) throws UapkiException, IOException {
+        String encrypt = decryptService.decrypt(decryptRequest);
 
         return ResponseEntity.ok(encrypt);
     }
