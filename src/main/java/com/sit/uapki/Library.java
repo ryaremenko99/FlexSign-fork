@@ -86,17 +86,10 @@ public final class Library {
         public void json_free (Pointer str);
     }
     
-    private final boolean enableDebugLog;
     private final UapkiNativeInterface uapki;
     private final Gson gson;
     private String name;
     private String version;
-    
-    private void debugLog (String text) {
-        if (enableDebugLog) {
-            System.out.println(text);
-        }
-    }
 
     public Library () throws UapkiException {
         this(true);
@@ -104,8 +97,6 @@ public final class Library {
 
     public Library (boolean enableDebugOut) throws UapkiException {
         try {
-            this.enableDebugLog = enableDebugOut;
-            
             LoaderLibFromResource loader = new LoaderLibFromResource();
 
             //  Warning: here need order
@@ -176,7 +167,7 @@ public final class Library {
             if (Platform.isWindows()) libExt = EXT_DLL;
             else if (Platform.isMac()) libExt = EXT_DYLIB;
             else libExt = EXT_SO;
-            debugLog(" resPath: '" + resPath + "'\n libPrefix: '" + libPrefix + "'\n libExt: '" + libExt + "'");
+            log.info(" resPath: '" + resPath + "'\n libPrefix: '" + libPrefix + "'\n libExt: '" + libExt + "'");
         }
         
         void load (String libName, String version) throws IOException {
@@ -229,9 +220,9 @@ public final class Library {
         req.method = method;
         req.parameters = params;
         String jsonRequest = gson.toJson(req);
-        debugLog("jsonRequest: " + jsonRequest);
+        log.info("jsonRequest: " + jsonRequest);
         String jsonResponse = processJson(jsonRequest);
-        debugLog("jsonResponse: " + jsonResponse);
+        log.info("jsonResponse: " + jsonResponse);
         AnyResponse response = gson.fromJson(jsonResponse, AnyResponse.class);
 
         if (response.errorCode != 0) {
