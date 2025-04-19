@@ -195,7 +195,7 @@ public final class Library {
                 final String filename = libPrefix + libName + file_ext;
 
                 // Have to use a stream
-                debugLog("Load from resource: '" + (resPath + filename) + "'");
+                log.info("Load from resource: '" + (resPath + filename) + "'");
                 InputStream in = getClass().getResourceAsStream(resPath + filename);
 
                 // Always write to different location
@@ -205,7 +205,7 @@ public final class Library {
                 in.close();
                 out.close();
                 System.load(tmp_file.toString());
-                debugLog("Loaded from tmp: '" + tmp_file.toString() + "'");
+                log.info(("Loaded from tmp: '" + tmp_file + "'"));
             }
             catch (UnsatisfiedLinkError e) {
                 System.out.println("LoaderLibFromResource.load: " + e.getMessage());
